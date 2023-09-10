@@ -157,16 +157,16 @@ export default function OrderDetails({ onClose, id }: any) {
       (item) => item.productId.name != name
     );
     //    updateItems?.forEach(item => { arrey.push(item.productId) });
-    if (updateItems != undefined) {
-    }
+   
     console.log("order after change", order);
     setOrderItems(updateItems);
     setOrder((prevOrder: any) => ({
       ...prevOrder,
       totalAmount: sumOfPrice,
-      orderItems: orderItems,
+      orderItems: updateItems,
     }));
   };
+  
   useEffect(() => {
     if (selectedMenuItem == "DOLLAR") {
       const x: CurrencyMap = { key: "$", value: 3.5 };
@@ -197,6 +197,7 @@ export default function OrderDetails({ onClose, id }: any) {
     }))
     flag = true
   }
+
   const addToCart = () => {
     let product: any;
     for (let i = 0; i < products.length; i++) {
@@ -223,6 +224,7 @@ export default function OrderDetails({ onClose, id }: any) {
       }));
     }
   };
+
   const saveChanges = async (e: any) => {
     if (order) {
       console.log(order);
@@ -232,8 +234,18 @@ export default function OrderDetails({ onClose, id }: any) {
       // let result = await axios.put("http://localhost:8080/order",order)
       console.log(result);
     }
+
   };
-  const cancelOrder = (id: string | undefined) => { };
+  const cancelOrder =async (id: string | undefined) => {
+    if (order) {
+      console.log(order);
+       order.orderStatusId="cancelled"
+       setOrder(order)
+      let result = await putData("order", order);
+      // let result = await axios.put("http://localhost:8080/order",order)
+      console.log(result);
+    }
+   };
   return (
     <div >
       <DialogContent sx={{ p: 0, height: "30vh" }}>

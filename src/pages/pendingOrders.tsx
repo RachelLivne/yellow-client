@@ -1,5 +1,6 @@
 
 import * as React from 'react';
+import EditIcon from '@mui/icons-material/Edit';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -43,15 +44,30 @@ interface PendingOrdersProps {
 
 
 
+const PendingOrders: React.FC = () => {
+  const [open, setOpen] = React.useState(false);
+const [open2, setOpen2] = React.useState(false);
+
+const [id, setId] = React.useState("")
 
 let orders: IOrder[] = [];
+const handleClickOpen = () => {
+  setOpen(true);
+};
 
+const handleButtonClick = (id:any) => {
+  // Handle the button click event here. You can perform any action you want.
+  setId(id)
+  handleClickOpen()
+
+  console.log(`Button clicked for row with ID ${id}`);
+};
 const columns: GridColDef[] = [
 
   { field: 'products', headerName: 'Products', width: 300 },
-  { field: 'customer', headerName: 'Customer', width: 300 },
+  { field: 'customer', headerName: 'Customer', width: 200 },
   {
-    field: 'status', type: 'string', headerName: 'Status', width: 300,
+    field: 'status', type: 'string', headerName: 'Status', width: 100,
     cellClassName: (params: GridCellParams<any, string>) => {
       if (params.value == null) {
         return '';
@@ -71,16 +87,21 @@ const columns: GridColDef[] = [
       return ''
     },
   },
-  { field: 'price', headerName: 'Price', width: 300 },
+  { field: 'price', headerName: 'Price', width: 100 },
 
-  { field: 'date', type: 'date', headerName: 'Date', width: 200 }
+  { field: 'date', type: 'date', headerName: 'Date', width: 200 },
 
-
-
-
-
+  { field: 'actions', headerName: 'UPDATE', width: 150, renderCell: (params) => {
+    return (
+      <EditIcon
+      style={{ cursor: 'pointer' }}
+      onClick={() => handleButtonClick(params.row.id)}
+    />
+      // <button onClick={() => handleButtonClick(params.row.id)}>Update Order</button>
+    );
+  }},
 ];
-const PendingOrders: React.FC = () => {
+
   const filterTables=(filters:any)=>{
     //כאן אמור ליהיות השליחה לשרת!!!
         console.log(filters)
@@ -99,6 +120,7 @@ const[firstPaginationModel,setfirstPaginationModel]=React.useState({
   page:0,
   pageSize:3,
 });
+
 const getOrders = async () => {
 
     try {
@@ -123,7 +145,7 @@ const getOrders = async () => {
           })
           console.log(e.customer);
 
-          currentRows.push({ id: e.id, 'price': e.totalAmount, 'status': e.orderStatusId, 'customer': e.customer.fullName, 'products': AllPrudocts, 'date': new Date(e.auditData.createDate) })
+          currentRows.push({ 'id': e.id, 'price': e.totalAmount, 'status': e.orderStatusId, 'customer': e.customer.fullName, 'products': AllPrudocts, 'date': new Date(e.auditData.createDate) })
         }
 
         )
@@ -188,7 +210,7 @@ const getOrders = async () => {
 
 
 
-
+  
 
   useEffect(() => {
 
@@ -202,16 +224,12 @@ const getOrders = async () => {
   }, [firstPaginationModel]);
 
   let navigater = useNavigate();
-  const [open, setOpen] = React.useState(false);
-  const [open2, setOpen2] = React.useState(false);
 
-  const [id, setId] = React.useState("64e21292cf0cd64eb4f2497d")
+
 const nav=()=>{
   navigater(`/newOrder`)
 }
-const handleClickOpen = () => {
-  setOpen(true);
-};
+
 const handleClose = () => {
   setOpen(false);
 };
@@ -224,6 +242,7 @@ const handleClose = () => {
   const handleClose2 = () => {
     setOpen2(false);
   };
+
 
   return (
     <div>
@@ -301,7 +320,7 @@ const handleClose = () => {
 
               <div>
         <Button sx={{ width: 150 }} variant="text" onClick={nav}> new order</Button>
-        <Link onClick={handleClickOpen}>order-details</Link>
+        {/* <Link onClick={handleClickOpen}>order-details</Link> */}
         <Dialog onClose={handleClose} fullWidth maxWidth={'md'} open={open} PaperProps={{ sx: { width: "80%", height: "80%", padding: '0', margin: '0' } }}>
             <OrderDetails onClose={handleClose} id={id} />
         </Dialog>
